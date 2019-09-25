@@ -1,0 +1,90 @@
+1. The only file that you should submit is my-interpreter.rkt.  In the
+   beginning of the file, after the requires and the provides, add the
+   following two lines:
+
+(define stacks (make-vector 100))
+(define stacksindex 0)
+
+and at the end add the following six lines
+
+(define (cleanup)
+  (set!  stacks (make-vector 100))
+  (set! stacksindex 0)
+  (set! framenumber 0)
+  (set! stack '())
+  (push (createframe (make-hash '()) (emptyframe))))
+
+3. In the definition for eval-exp, change the clause for debugexp
+   to the following (comment out the old clause):
+
+   [(debugexp) (begin
+                 (vector-set! stacks stacksindex stack)
+                 (set! stacksindex (+ 1 stacksindex)))]
+
+4. You should submit your interpreter after incorporating the additions
+   described above.
+
+5. To test  out whether you are  going right or not I  have provided a
+   file called examples.rkt  with 13 examples. Make a  14th example by
+   converting the following program to myracket:
+
+(define (f x)
+  (define (p f) (f (* x x)))
+  (define (g y)
+    (cond [(= x 2) (begin (set! x (+ x 2))
+                        (h (- y 1)))]))
+  (define (h x)
+    (p (lambda (w) (+ w x))))
+  (g x))
+(define main (f 2))
+
+6.  In addition, I have provided a new version of try.rkt.  This
+  includes the testing of all 13 programs. Consider the first program
+  prog13. The resulting of testing the program on this program should
+  look like this.
+
+Program 13********************************
+
+#<pgm: 
+  recurse --> #<lam: (i q) #(struct:defexp (#<def: p #<lam: () #<iff: #<=: i 1> #<beginexp: (#<debugexp> #<app: q ()>)> #<beginexp: (#(struct:sett i #<-: i 1>) #(struct:sett mainfn #<lam: () 0>) #<debugexp>)>>>>) #<iff: #<>: i 1> #<app: recurse (#<-: i 1> p)> #<app: p ()>>)>
+  dummy --> #<lam: () 0>
+  mainfn --> #<lam: () #<app: recurse (2 dummy)>>
+  main --> #<app: mainfn ()>>
+
+Evaluation using your interpreter***********
+
+
+Evaluation using model interpreter ************
+
+Printing difference: #t means no difference
+
+#t
+
+  Let explain  this.  The first  line gives the program  number.  Then
+  the program  is printed.  Following  this the results  of evaluating
+  the program  are printed. In  this case  they are empty  because the
+  only effect of this program is to create a side effect.
+
+  The thing  that is  printed after  this is  interesting.  It  is the
+  complete stack  at each  of the  debugexp's. So if  a program  has 3
+  debugexp's, then three snapshots of the  stack will be recorded in a
+  vector  and   these  have   to  exactly  match   the  stack   of  my
+  implementation. Only then will you get  the #t at the end. Since the
+  model  interpreter  has  also  changed (just  for  the  purposes  of
+  evaluation), I  am attaching the  new compiled version of  the model
+  interpreter.
+
+  In summary:
+   a. Extract the files from the new tar-zips.
+   b. Change you my-interpreter in the way described above.
+   c. Run  try.rkt. Make sure  that you get  a #t after  testing every
+      program.
+   d. Submit my-interpreter.
+
+
+
+
+
+
+
+
